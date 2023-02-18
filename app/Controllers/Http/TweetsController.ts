@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database'
 import Tweet from 'App/Models/Tweet'
 
 export default class TweetsController {
@@ -17,7 +16,7 @@ export default class TweetsController {
     }
 
     public async create({ auth, request, response }: HttpContextContract) {
-        const body = request.only(['id', 'title', 'description'])
+        const body = request.only(['title', 'description'])
 
         try {
             const user = auth.use('api').user;
@@ -32,7 +31,7 @@ export default class TweetsController {
 
             await newTweet.save()
 
-            return response.ok({ status: 'success', data: newTweet, message: `success update tweeet with id ${body.id}` })
+            return response.ok({ status: 'success', data: newTweet, message: `success create tweeet with id ${newTweet.id}` })
         } catch (error) {
             return response.badRequest({ status: 'fail', message: error.message })
         }
@@ -47,7 +46,7 @@ export default class TweetsController {
             if (user === undefined)
                 return response.unauthorized({ status: 'fail', message: 'unauthorized operation' })
 
-            const tweet = await Database
+            const tweet = await Tweet
                 .query()
                 .where('id', body.id)
                 .where('user_id', user.id)
@@ -68,7 +67,7 @@ export default class TweetsController {
             if (user === undefined)
                 return response.unauthorized({ status: 'fail', message: 'unauthorized operation' })
 
-            const updatedTweet = await Database
+            const updatedTweet = await Tweet
                 .query()
                 .where('id', body.id)
                 .where('user_id', user.id)
