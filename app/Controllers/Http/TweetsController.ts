@@ -7,7 +7,9 @@ export default class TweetsController {
             if (!await auth.use('api').check())
                 return response.unauthorized({ status: 'fail', message: 'unauthorized operation' })
 
-            const tweets = await Tweet.findBy('user_id', auth.use('api').user?.id)
+            const tweets = await Tweet
+            .query()
+            .where('user_id', auth.use('api').user?.id)
 
             return response.ok({ status: 'success', data: tweets, message: 'success getting all tweets' })
         } catch (error) {
