@@ -4,12 +4,14 @@ import Tweet from 'App/Models/Tweet'
 export default class TweetsController {
     public async index({ auth, response }: HttpContextContract) {
         try {
-            if (!await auth.use('api').check())
+            const user = auth.use('api').user;
+
+            if (user === undefined)
                 return response.unauthorized({ status: 'fail', message: 'unauthorized operation' })
 
             const tweets = await Tweet
             .query()
-            .where('user_id', auth.use('api').user?.id)
+            .where('user_id', user.id)
 
             return response.ok({ status: 'success', data: tweets, message: 'success getting all tweets' })
         } catch (error) {
