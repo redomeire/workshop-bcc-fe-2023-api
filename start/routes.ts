@@ -24,6 +24,26 @@ Route.get('/', async () => {
   return { hello: 'world' }
 })
 
+Route.group(() => {
+  Route.group(() => {
+    Route.group(() => {
+      Route.post('/register', 'AuthController.register')
+      Route.post('/login', 'AuthController.login')
+      Route.post('/logout', 'AuthController.logout')
+    }).prefix('auth')
+
+    Route.group(() => {
+      Route.get('/all', 'TweetsController.index').middleware('auth')
+      Route.get('/:id/detail', 'TweetsController.detail').middleware('auth')
+      Route.post('/create', 'TweetsController.create').middleware('auth')
+      Route.put('/update', 'TweetsController.update').middleware('auth')
+      Route.delete('/delete', 'TweetsController.delete').middleware('auth')
+    }).prefix('tweet')
+
+  }).prefix('v1')
+  
+}).prefix('api')
+
 Route.get('/users', () => {
   const users = [
     {
